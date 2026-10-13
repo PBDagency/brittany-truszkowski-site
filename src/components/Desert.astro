@@ -1,0 +1,63 @@
+---
+// Layered desert ridgeline: far mesas, rolling middle hills, near ridge with saguaros.
+//   part="back"  → far mesas + middle hills (sits behind the portrait)
+//   part="front" → near ridge + saguaros (sits in front, grounding the portrait)
+//   part="all"   → everything
+interface Props {
+  part?: 'back' | 'front' | 'all';
+  class?: string;
+}
+const { part = 'all', class: className = '' } = Astro.props;
+const back = part === 'back' || part === 'all';
+const front = part === 'front' || part === 'all';
+---
+
+<svg
+  class:list={['desert', className]}
+  viewBox="0 0 1440 320"
+  preserveAspectRatio="xMidYMax slice"
+  aria-hidden="true"
+  focusable="false"
+>
+  {back && (
+    <>
+      <path
+        class="far"
+        d="M0,190 L70,186 L96,150 L210,146 L232,176 L330,182 L380,168 L470,170 L520,120 L640,116 L668,160 L780,172 L900,166 L960,138 L1080,134 L1104,168 L1220,176 L1290,158 L1380,160 L1440,150 L1440,320 L0,320 Z"
+      />
+      <path
+        class="mid"
+        d="M0,236 C120,214 220,226 320,218 C430,208 520,232 640,224 C760,216 860,198 980,210 C1100,222 1200,206 1300,212 C1370,216 1410,226 1440,222 L1440,320 L0,320 Z"
+      />
+    </>
+  )}
+  {front && (
+    <>
+      <path
+        class="near"
+        d="M0,272 C160,256 300,266 440,262 C600,256 720,276 880,270 C1040,264 1180,252 1320,262 C1380,266 1420,270 1440,268 L1440,320 L0,320 Z"
+      />
+      <g class="saguaro">
+        <path d="M206,266 V196 M206,234 H190 V212 M206,224 H222 V200" />
+        <path d="M1262,262 V214 M1262,240 H1251 V224" />
+      </g>
+    </>
+  )}
+</svg>
+
+<style>
+  .desert {
+    width: 100%;
+    height: 100%;
+  }
+  .far { fill: #6E4148; }
+  .mid { fill: #2E2532; }
+  .near { fill: var(--midnight-deep); }
+  .saguaro path {
+    fill: none;
+    stroke: var(--midnight-deep);
+    stroke-width: 11;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

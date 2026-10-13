@@ -1,0 +1,72 @@
+---
+import '@fontsource-variable/playfair-display/index.css';
+import '@fontsource-variable/montserrat/index.css';
+import '@fontsource-variable/source-sans-3/index.css';
+import '@fontsource/allura/latin-400.css';
+import '../styles/global.css';
+import { SITE } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE.title, description = SITE.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+
+// Person schema: only facts that are confirmed. Add jobTitle, worksFor,
+// sameAs (LinkedIn etc.) and The Legal COO entity once details are final.
+const person: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${SITE.url}/#person`,
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  knowsAbout: [
+    'Legal operations',
+    'Law firm management',
+    'Leadership development',
+    'Organizational growth',
+    'Public speaking',
+    'Nonprofit and community leadership',
+  ],
+};
+if (SITE.linkedin) person.sameAs = [SITE.linkedin];
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE.url}/#website`,
+  name: SITE.name,
+  url: SITE.url,
+  publisher: { '@id': `${SITE.url}/#person` },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {!SITE.indexable && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0E2A3A" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.name} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script type="application/ld+json" set:html={JSON.stringify(website)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>
